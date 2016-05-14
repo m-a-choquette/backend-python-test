@@ -24,12 +24,24 @@
         <tr>
             <form method="post" action="{{ url_for('todos_POST') }}">
                 <td colspan="3">
-                    <input type="textbox" name="description" class="small-6 small-center" placeholder="Description...">
+                    <input id="new-todo-description" type="textbox" name="description" class="small-6 small-center" placeholder="Description...">
                 </td>
                 <td>
-                    <button type="submit" class="btn btn-sm btn-primary">Add</button>
+                    <button type="submit" class="btn btn-sm btn-primary" onclick="validateDescription()">Add</button>
                 </td>
             </form>
+            <script>
+                // Function called when the add button is clicked.
+                // Checks if the description and alert the user if it's not valid.
+                // @param {void}
+                // @return {void}
+                function validateDescription() {
+                    debugger;
+                    if ($('#new-todo-description').val().split(' ').join('').length == 0) {
+                        alert('you must enter a valid description');
+                    }
+                }
+            </script>
         </tr>
     </table>
 </div>
