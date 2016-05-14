@@ -45,7 +45,9 @@ def logout():
 
 @app.route('/todo/<id>', methods=['GET'])
 def todo(id):
-    cur = g.db.execute("SELECT * FROM todos WHERE id ='%s'" % id)
+    if not session.get('logged_in'):
+        return redirect('/login')
+    cur = g.db.execute("SELECT * FROM todos WHERE id ='%s' AND user_id ='%s'" % (id, session['user']['id']))
     todo = cur.fetchone()
     return render_template('todo.html', todo=todo)
 
@@ -55,7 +57,7 @@ def todo(id):
 def todos():
     if not session.get('logged_in'):
         return redirect('/login')
-    cur = g.db.execute("SELECT * FROM todos")
+    cur = g.db.execute("SELECT * FROM todos WHERE user_id = '%s'" % session['user']['id'])
     todos = cur.fetchall()
     return render_template('todos.html', todos=todos)
 
@@ -65,12 +67,16 @@ def todos():
 def todos_POST():
     if not session.get('logged_in'):
         return redirect('/login')
-    g.db.execute(
-        "INSERT INTO todos (user_id, description) VALUES ('%s', '%s')"
-        % (session['user']['id'], request.form.get('description', ''))
-    )
-    g.db.commit()
+    description = request.form.get('description', '').strip(' ')
+    if len(description) >= 1:
+        g.db.execute(
+            "INSERT INTO todos (user_id, description) VALUES ('%s', '%s')"
+            % (session['user']['id'], request.form.get('description', ''))
+        )
+        g.db.commit()
     return redirect('/todo')
+
+
 
 
 @app.route('/todo/<id>', methods=['POST'])
