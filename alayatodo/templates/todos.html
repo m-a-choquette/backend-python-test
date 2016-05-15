@@ -4,15 +4,25 @@
 <div class="col-md-4 col-md-offset-4">
     <h1>Todo List:</h1>
     <table class="table table-striped">
-        <th>#</th><th>User</th><th>Description</th><th></th>
+        <th>#</th><th>User</th><th>Description</th><th></th><th></th>
         {% for todo in todos %}
             <tr>
                 <td>{{ todo.id }}</td>
                 <td>{{ todo.user_id }}</td>
                 <td>
-                    <a href="{{ url_for('todo', id=todo.id) }}">
-                       {{ todo.description }}
+                    <a href="{{ url_for('todo', id=todo.id) }}" class="{{ 'todo-completed' if todo.completed == 1 }}">
+                        {{ todo.description }}
                     </a>
+                </td>
+                <td>
+                    <form method="post" action="{{ url_for('todo_complete', id=todo.id) }}">
+                        <input id="todo-complete-{{ todo.id }}"
+                               type="checkbox"
+                               name="todo-completed"
+                               value="{{ todo.completed }}"
+                               class="todo-complete-checkbox"
+                               {{ 'checked' if todo.completed == 1 else '' }} />
+                    </form>
                 </td>
                 <td>
                     <form method="post" action="{{ url_for('todo_delete', id=todo.id) }}">
@@ -29,18 +39,8 @@
                 <td>
                     <button type="submit" class="btn btn-sm btn-primary" onclick="validateDescription()">Add</button>
                 </td>
+                <td></td>
             </form>
-            <script>
-                // Function called when the add button is clicked.
-                // Checks if the description and alert the user if it's not valid.
-                // @param {void}
-                // @return {void}
-                function validateDescription() {
-                    if ($('#new-todo-description').val().split(' ').join('').length == 0) {
-                        alert('you must enter a valid description');
-                    }
-                }
-            </script>
         </tr>
     </table>
 </div>
