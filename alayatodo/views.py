@@ -30,7 +30,7 @@ def login_POST():
     password = request.form.get('password')
     user = Users.query.filter_by(username=username, password=password).first()
     if user:
-        session['user'] = user.__dict__
+        session['user'] = {field.name: getattr(user, field.name) for field in user.__table__.columns}
         session['logged_in'] = True
         return redirect('/todo')
 
