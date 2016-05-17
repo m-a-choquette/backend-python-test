@@ -4,7 +4,8 @@ from flask import (
     redirect,
     render_template,
     request,
-    session
+    session,
+    jsonify
     )
 from alayatodo.models import db, Users, Todos
 
@@ -27,7 +28,8 @@ def login_POST():
     password = request.form.get('password')
     user = Users.query.filter_by(username=username, password=password).first()
     if user:
-        session['user'] = {'id': user.id}
+        # session['user'] = {'id': user.id}
+        session['user'] = user.__dict__
         session['logged_in'] = True
         return redirect('/todo')
 
@@ -47,6 +49,14 @@ def todo(id):
         return redirect('/login')
     todo = Todos.query.filter_by(id=id, user_id=session['user']['id']).first()
     return render_template('todo.html', todo=todo)
+
+
+@app.route('/todo/<id>/json', methods=['GET'])
+def todo_JSON(id):
+    if not session.get('logged_in'):
+        return redirect('/login')
+    todo = Todos.query.filter_by(id=id, user_id=session['user']['id']).first()
+    return jsonify({field.name: getattr(todo, field.name) for field in todo.__table__.columns})
 
 
 @app.route('/todo', methods=['GET'])

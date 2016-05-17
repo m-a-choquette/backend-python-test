@@ -4,7 +4,7 @@
 <div class="col-md-4 col-md-offset-4">
     <h1>Todo List:</h1>
     <table class="table table-striped">
-        <th>#</th><th>User</th><th>Description</th><th></th><th></th>
+        <th>#</th><th>User</th><th>Description</th><th></th><th></th><th></th>
         {% for todo in todos %}
             <tr>
                 <td>{{ todo.id }}</td>
@@ -23,6 +23,11 @@
                                class="todo-complete-checkbox"
                                {{ 'checked' if todo.completed == 1 else '' }} />
                     </form>
+                </td>
+                <td>
+                    <a href="{{ url_for('todo_JSON', id=todo.id) }}" target="_blank">
+                        JSON
+                    </a>
                 </td>
                 <td>
                     <form method="post" action="{{ url_for('todo_delete', id=todo.id) }}">
