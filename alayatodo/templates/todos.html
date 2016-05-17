@@ -4,18 +4,19 @@
 <div class="col-md-4 col-md-offset-4">
     <h1>Todo List:</h1>
     <table class="table table-striped">
+
         <th>#</th><th>User</th><th>Description</th><th></th><th></th><th></th>
         {% for todo in todos %}
             <tr>
                 <td>{{ todo.id }}</td>
                 <td>{{ todo.user_id }}</td>
                 <td>
-                    <a href="{{ url_for('todo', id=todo.id) }}" class="{{ 'todo-completed' if todo.completed == 1 }}">
+                    <a href="{{ url_for('todo', id=todo.id, page=pagination.page) }}" class="{{ 'todo-completed' if todo.completed == 1 }}">
                         {{ todo.description }}
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ url_for('todo_complete', id=todo.id) }}">
+                    <form method="post" action="{{ url_for('todo_complete', id=todo.id, page=pagination.page) }}">
                         <input id="todo-complete-{{ todo.id }}"
                                type="checkbox"
                                name="todo-completed"
@@ -30,7 +31,7 @@
                     </a>
                 </td>
                 <td>
-                    <form method="post" action="{{ url_for('todo_delete', id=todo.id) }}">
+                    <form method="post" action="{{ url_for('todo_delete', id=todo.id, page=pagination.page) }}">
                         <button type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove glyphicon-white"></span></button>
                     </form>
                 </td>
@@ -48,5 +49,20 @@
             </form>
         </tr>
     </table>
+    <hr>
+    <h3>Pages</h3>
+    <div class=pagination>
+    {%- for page in pagination.iter_pages() %}
+    {% if page %}
+        {% if page != pagination.page %}
+        <a href="{{ url_for("todos", page=page) }}">{{ page }}</a>
+        {% else %}
+        <strong>{{ page }}</strong>
+        {% endif %}
+    {% else %}
+        <span class=ellipsis>…</span>
+    {% endif %}
+    {%- endfor %}
+    </div>
 </div>
 {% endblock %}

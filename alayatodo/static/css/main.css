@@ -11,6 +11,6 @@ body {
     text-decoration: line-through;
 }
 
-.todo-complete-checkbox {
-    /*visibility: hidden;*/
+.pagination {
+    font-size: large;
 }

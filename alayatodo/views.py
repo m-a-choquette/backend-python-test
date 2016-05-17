@@ -6,7 +6,8 @@ from flask import (
     request,
     session,
     jsonify,
-    flash
+    flash,
+    url_for
     )
 from alayatodo.models import db, Users, Todos
 
@@ -29,7 +30,6 @@ def login_POST():
     password = request.form.get('password')
     user = Users.query.filter_by(username=username, password=password).first()
     if user:
-        # session['user'] = {'id': user.id}
         session['user'] = user.__dict__
         session['logged_in'] = True
         return redirect('/todo')
@@ -49,7 +49,13 @@ def todo(id):
     if not session.get('logged_in'):
         return redirect('/login')
     todo = Todos.query.filter_by(id=id, user_id=session['user']['id']).first()
-    return render_template('todo.html', todo=todo)
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    return render_template('todo.html', todo=todo, page=page)
 
 
 @app.route('/todo/<id>/json', methods=['GET'])
@@ -65,8 +71,19 @@ def todo_JSON(id):
 def todos():
     if not session.get('logged_in'):
         return redirect('/login')
-    todos = Users.query.get(session['user']['id']).todos
-    return render_template('todos.html', todos=todos)
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    pagination = Users.query.get(session['user']['id']).todos.paginate(page, 8)
+    todos = pagination.items
+
+    return render_template('todos.html',
+                           todos=todos,
+                           pagination=pagination,
+                           )
 
 
 @app.route('/todo', methods=['POST'])
@@ -90,7 +107,14 @@ def todo_complete(id):
     todo = Todos.query.filter_by(id=id, user_id=session['user']['id']).first()
     todo.completed = completed
     db.session.commit()
-    return redirect('/todo')
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    return redirect(url_for('todos', page=page))
+
 
 
 @app.route('/todo/<id>', methods=['POST'])
@@ -101,4 +125,10 @@ def todo_delete(id):
     db.session.delete(todo)
     db.session.commit()
     flash('Todo deleted !')
-    return redirect('/todo')
+
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    return redirect(url_for('todos', page=page))
