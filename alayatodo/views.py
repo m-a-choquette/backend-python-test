@@ -5,7 +5,8 @@ from flask import (
     render_template,
     request,
     session,
-    jsonify
+    jsonify,
+    flash
     )
 from alayatodo.models import db, Users, Todos
 
@@ -77,6 +78,7 @@ def todos_POST():
     if len(description) >= 1:
         db.session.add(Todos(user_id=session['user']['id'], description=description))
         db.session.commit()
+    flash('Todo created !')
     return redirect('/todo')
 
 
@@ -98,4 +100,5 @@ def todo_delete(id):
     todo = Todos.query.filter_by(id=id, user_id=session['user']['id']).first()
     db.session.delete(todo)
     db.session.commit()
+    flash('Todo deleted !')
     return redirect('/todo')

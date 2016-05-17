@@ -10,3 +10,9 @@ function validateDescription() {
 $('.todo-complete-checkbox').on('change', function() {
     $(this).parent('form').submit();
 });
+
+
+// Function to hide flash confirmation message when todos are created/deleted
+$( document ).ready(function() {
+    $('.alert.alert-warning.alert-dismissible.fade.in').delay(1000).hide([2000])
+});
