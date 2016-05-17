@@ -6,7 +6,7 @@ function validateDescription() {
     }
 }
 
-// Function that triggers form submit when complete checkbox is checked$(function() {
+// Function that triggers form submit when complete checkbox is checked
 $('.todo-complete-checkbox').on('change', function() {
     $(this).parent('form').submit();
 });

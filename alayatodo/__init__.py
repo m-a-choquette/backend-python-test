@@ -1,4 +1,5 @@
 from flask import Flask, g
+from flask_sqlalchemy import SQLAlchemy
 import sqlite3
 
 # configuration
@@ -11,6 +12,9 @@ PASSWORD = 'default'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DATABASE
+db = SQLAlchemy(app)
 
 
 def connect_db():
